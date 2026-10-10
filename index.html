@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TinyIcon — Favicon Generator: Text, Emoji & Image Icons in Every Size</title>
+<meta name="description" content="TinyIcon is a free favicon generator. Turn text, an emoji or your own image into crisp favicons, preview them live from 16px to 512px, shape the background and corners, and download individual PNG sizes or a classic .ico file.">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Space Grotesk',system-ui,sans-serif;background:#202623;color:#e8f0eb}
+  .mono{font-family:'IBM Plex Mono',monospace}
+  .checker{background-image:conic-gradient(#39423c 25%,#2c332f 0 50%,#39423c 0 75%,#2c332f 0);background-size:16px 16px}
+  .tile{background:#262d29;border:1px solid #39423c;border-radius:14px}
+  .tile:hover{border-color:#6ee7b7}
+  input[type=range]{accent-color:#34d399}
+  .mode-btn[aria-pressed="true"]{background:#6ee7b7;color:#14201a;font-weight:700}
+  canvas{display:block;margin:0 auto;image-rendering:auto}
+  .preview-canvas{max-width:100%;height:auto}
+  details summary{cursor:pointer}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"What sizes should a modern favicon set include?","acceptedAnswer":{"@type":"Answer","text":"A practical modern set covers 16×16 and 32×32 for browser tabs, 48×48 for shortcuts, 180×180 for Apple touch icons, 192×192 and 512×512 for Android and progressive web apps, plus a classic multi-size .ico file for older browsers. TinyIcon renders all of these from one design."}},
+{"@type":"Question","name":"Can I make a favicon from an emoji?","acceptedAnswer":{"@type":"Answer","text":"Yes. Switch TinyIcon to Emoji mode, pick one of the preset emoji or type your own, choose a background colour and corner style, and every size is rendered instantly. Emoji favicons are a fast way to give a small project a friendly, recognisable identity."}},
+{"@type":"Question","name":"What image format works best for the image mode?","acceptedAnswer":{"@type":"Answer","text":"A square PNG or JPG with a simple, high-contrast subject works best. TinyIcon centre-crops your image to a square, applies your chosen padding, background and corners, and exports clean PNG files. Very detailed photos shrink poorly at 16 pixels, so bold shapes and logos give the clearest results."}},
+{"@type":"Question","name":"Why does my favicon look blurry in the browser tab?","acceptedAnswer":{"@type":"Answer","text":"Blurriness usually means the browser is scaling a single large image down, or the design has thin lines and low contrast that disappear at 16 pixels. Use the live 16-pixel preview in TinyIcon to check legibility, simplify the design, increase contrast, and ship the exact sizes browsers ask for instead of one oversized file."}},
+{"@type":"Question","name":"How do I add the downloaded favicon to my website?","acceptedAnswer":{"@type":"Answer","text":"Upload the files to your site's root folder and add link tags in the head of your HTML: a shortcut icon link for the .ico file, icon links for the 32×32 and 16×16 PNGs, an apple-touch-icon link for the 180×180 PNG, and theme-color meta if you use the 192 and 512 sizes in a web app manifest."}},
+{"@type":"Question","name":"Is TinyIcon free and are my images uploaded anywhere?","acceptedAnswer":{"@type":"Answer","text":"Yes, TinyIcon is completely free with unlimited usage, no signup and no watermark. Everything is drawn locally in your browser with the canvas API — your images, text and emoji are never uploaded to a server, so the tool works privately and even offline once the page has loaded."}}
+]}
+</script>
+</head>
+<body id="top">
+<header class="sticky top-0 z-40 backdrop-blur bg-[#202623]/90 border-b border-[#39423c]">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 h-16 flex items-center justify-between">
+    <a href="#top" class="flex items-center gap-2.5">
+      <span class="grid grid-cols-2 gap-[3px] w-8 h-8 p-[5px] rounded-lg bg-[#6ee7b7]" aria-hidden="true">
+        <span class="bg-[#14201a] rounded-[3px]"></span><span class="bg-[#14201a]/60 rounded-[3px]"></span>
+        <span class="bg-[#14201a]/60 rounded-[3px]"></span><span class="bg-[#14201a] rounded-[3px]"></span>
+      </span>
+      <span class="text-xl font-bold tracking-tight">Tiny<span class="text-[#6ee7b7]">Icon</span></span>
+    </a>
+    <nav class="flex items-center gap-5 text-sm">
+      <a href="#top" class="text-[#b9c8be] hover:text-[#6ee7b7]">Home</a>
+      <a href="https://fixoraa.tech" class="text-[#b9c8be] hover:text-[#6ee7b7]">More Tools</a>
+    </nav>
+  </div>
+</header>
+
+<div class="no-print mx-auto max-w-6xl px-4 sm:px-6 pt-4" role="complementary" aria-label="Advertisement">
+  <div class="mx-auto text-center" style="max-width:728px">
+    <span class="block text-[10px] tracking-[0.18em] uppercase text-slate-400 mb-1.5">Advertisement</span>
+    <div class="flex justify-center overflow-hidden">
+      <div class="origin-top scale-[0.44] sm:scale-100 shrink-0">
+        <script>
+          atOptions = { 'key' : '4e68ac77881c17fe128a46565d9a4e8c', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
+        </script>
+        <script src="https://www.highrevenueformat.com/4e68ac77881c17fe128a46565d9a4e8c/invoke.js"></script>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="mx-auto max-w-6xl px-4 sm:px-6 pb-10">
+  <section class="pt-8 pb-6 text-center">
+    <h1 class="text-3xl sm:text-5xl font-bold tracking-tight">The favicon <span class="text-[#6ee7b7]">icon lab</span></h1>
+    <p class="mt-3 text-[#b9c8be] max-w-2xl mx-auto">Design a favicon from text, an emoji or your own image. Watch it render live at every real-world size — from a 16-pixel browser tab to a 512-pixel app icon — then download exactly the files you need.</p>
+    <span class="inline-block mt-4 bg-[#6ee7b7] text-[#14201a] text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wide">Unlimited Free Usage</span>
+  </section>
+
+  <section class="grid lg:grid-cols-[380px_1fr] gap-6 items-start">
+    <!-- CONTROL BENCH -->
+    <div class="tile p-5 lg:sticky lg:top-24">
+      <h2 class="font-bold text-lg mb-4 mono text-[#6ee7b7]">// control bench</h2>
+
+      <div class="grid grid-cols-3 gap-2 mb-5" role="group" aria-label="Icon source mode">
+        <button type="button" class="mode-btn bg-[#313a34] rounded-lg py-2.5 text-sm" data-mode="text" aria-pressed="true">Text</button>
+        <button type="button" class="mode-btn bg-[#313a34] rounded-lg py-2.5 text-sm" data-mode="emoji" aria-pressed="false">Emoji</button>
+        <button type="button" class="mode-btn bg-[#313a34] rounded-lg py-2.5 text-sm" data-mode="image" aria-pressed="false">Image</button>
+      </div>
+
+      <div id="panel-text">
+        <label class="block text-sm font-semibold mb-1.5" for="textInput">Letters (1–4 characters)</label>
+        <input id="textInput" type="text" maxlength="4" value="Ti" class="w-full bg-[#1b201d] border border-[#39423c] rounded-lg px-3 py-2.5 text-lg focus:outline-none focus:border-[#6ee7b7]">
+        <label class="block text-sm font-semibold mt-4 mb-1.5" for="textColor">Text colour</label>
+        <div class="flex items-center gap-3">
+          <input id="textColor" type="color" value="#14201a" class="w-12 h-10 bg-transparent cursor-pointer">
+          <span id="textColorHex" class="mono text-sm text-[#b9c8be]">#14201a</span>
+        </div>
+      </div>
+
+      <div id="panel-emoji" class="hidden">
+        <label class="block text-sm font-semibold mb-1.5" for="emojiInput">Your emoji</label>
+        <input id="emojiInput" type="text" value="🚀" class="w-full bg-[#1b201d] border border-[#39423c] rounded-lg px-3 py-2.5 text-2xl focus:outline-none focus:border-[#6ee7b7]">
+        <div class="flex flex-wrap gap-2 mt-3" id="emojiPresets"></div>
+      </div>
+
+      <div id="panel-image" class="hidden">
+        <label class="block text-sm font-semibold mb-1.5" for="imageInput">Choose an image</label>
+        <input id="imageInput" type="file" accept="image/*" class="w-full text-sm text-[#b9c8be] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-[#6ee7b7] file:text-[#14201a] file:font-semibold cursor-pointer">
+        <p class="text-xs text-[#8fa398] mt-2">Square works best — the image is centre-cropped automatically. It never leaves your browser.</p>
+        <label class="block text-sm font-semibold mt-4 mb-1.5" for="padRange">Padding: <span id="padVal" class="mono text-[#6ee7b7]">8%</span></label>
+        <input id="padRange" type="range" min="0" max="40" value="8" class="w-full">
+      </div>
+
+      <hr class="border-[#39423c] my-5">
+      <label class="block text-sm font-semibold mb-1.5" for="bgColor">Background colour</label>
+      <div class="flex items-center gap-3">
+        <input id="bgColor" type="color" value="#6ee7b7" class="w-12 h-10 bg-transparent cursor-pointer">
+        <span id="bgColorHex" class="mono text-sm text-[#b9c8be]">#6ee7b7</span>
+        <label class="ml-auto flex items-center gap-2 text-sm cursor-pointer"><input id="transparentBg" type="checkbox" class="accent-[#34d399] w-4 h-4"> Transparent</label>
+      </div>
+      <div class="flex flex-wrap gap-2 mt-3" id="bgPresets"></div>
+
+      <label class="block text-sm font-semibold mt-5 mb-1.5" for="radiusRange">Rounded corners: <span id="radiusVal" class="mono text-[#6ee7b7]">22%</span></label>
+      <input id="radiusRange" type="range" min="0" max="50" value="22" class="w-full">
+      <div class="flex justify-between text-xs text-[#8fa398]"><span>Square</span><span>Soft</span><span>Circle</span></div>
+
+      <p id="statusMsg" class="mt-5 text-sm rounded-lg px-3 py-2 bg-[#313a34] text-[#b9c8be]" role="status">Your icon renders live as you type — check the smallest sizes first.</p>
+
+      <button type="button" id="icoBtn" class="mt-4 w-full bg-[#6ee7b7] hover:bg-[#34d399] text-[#14201a] font-bold rounded-lg py-3">Download favicon.ico (16+32+48)</button>
+      <p class="text-xs text-[#8fa398] mt-2 text-center">Or grab individual PNGs from the preview wall →</p>
+    </div>
+
+    <!-- PREVIEW WALL -->
+    <div>
+      <h2 class="font-bold text-lg mb-3 mono text-[#6ee7b7]">// preview wall — actual pixel sizes</h2>
+      <div class="tile p-4 mb-4 flex items-center gap-4">
+        <div class="checker rounded-lg p-2 shrink-0"><canvas id="heroCanvas" width="512" height="512" class="preview-canvas" style="width:96px;height:96px"></canvas></div>
+        <div class="text-sm text-[#b9c8be]">
+          <p class="text-[#e8f0eb] font-semibold mb-1">Browser test</p>
+          <p>The strip on the right shows your icon at true size. If the 16px and 32px tiles are not instantly readable, simplify: fewer letters, bolder shapes, stronger contrast.</p>
+        </div>
+        <div class="ml-auto hidden sm:flex items-end gap-3 shrink-0">
+          <div class="text-center"><canvas id="tabCanvas" width="16" height="16"></canvas><p class="mono text-[10px] text-[#8fa398] mt-1">16px tab</p></div>
+        </div>
+      </div>
+      <div id="previewGrid" class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+    </div>
+  </section>
+</main>
+
+<div class="no-print mx-auto max-w-6xl px-4 sm:px-6 pb-4" role="complementary" aria-label="Advertisement">
+  <div class="mx-auto text-center" style="max-width:728px">
+    <span class="block text-[10px] tracking-[0.18em] uppercase text-slate-400 mb-1.5">Advertisement</span>
+    <div class="flex justify-center overflow-hidden">
+      <script async src="https://js.wpadmngr.com/static/adManager.js" data-admpid="464498"></script>
+    </div>
+  </div>
+</div>
+
+<article class="mx-auto max-w-4xl px-4 sm:px-6 py-10">
+  <h2 class="text-2xl sm:text-3xl font-bold mb-4">Favicon Generator: How to Design an Icon That Survives at 16 Pixels</h2>
+  <p class="text-[#c3d2c8] leading-relaxed mb-4">A favicon is the smallest piece of branding your website owns, and arguably the hardest-working. It sits in the browser tab, the bookmarks bar, the history list, the mobile home screen and the app switcher — often as the only visual clue a visitor has about which of their forty open tabs is yours. TinyIcon is a favicon generator built like a laboratory bench: you bring the raw material — a letter or two, an emoji, or an image you already have — and the lab renders it at every size the modern web actually requests, so you can judge the result honestly before you ship it. Nothing is uploaded, nothing is watermarked, and every size can be downloaded on its own.</p>
+  <p class="text-[#c3d2c8] leading-relaxed mb-4">The central problem of favicon design is scale. A logo that looks magnificent on a billboard becomes grey soup at sixteen pixels. At that size you have a grid of 256 dots in total, fewer than a single character of the text you are reading now. Fine lines vanish, gradients muddy, and detailed illustrations collapse into unrecognisable blobs. Professional icon designers solve this by designing for the smallest size first and treating the large sizes as a bonus. TinyIcon encourages exactly that workflow: the preview wall shows the true pixel sizes side by side, and the browser-test strip holds your icon at a genuine 16 pixels next to the big hero render, so wishful thinking is impossible. If the tiny tile does not read instantly, the design — not the renderer — needs to change.</p>
+  <h3 class="text-xl font-bold mt-8 mb-3 text-[#6ee7b7]">Three ways to build an icon</h3>
+  <p class="text-[#c3d2c8] leading-relaxed mb-4">Text mode is the workhorse. One or two bold letters — your initials, the first letter of your product, a memorable abbreviation — set on a strong background colour remain legible at almost any size. TinyIcon automatically scales the type down as you add characters, because three or four letters in a sixteen-pixel box demand restraint. Monograms are the oldest form of favicon for a reason: type foundries have spent centuries making letterforms that survive small sizes, and borrowing that craft is smarter than fighting it. Pair a distinctive background colour with a contrasting letter colour and you have an icon that reads as a brand mark even before anyone can quite make out the letter.</p>
+  <p class="text-[#c3d2c8] leading-relaxed mb-4">Emoji mode is the fastest path to personality. A single emoji — a rocket, a wave, a leaf, a slice of pizza — carries colour, shape and meaning in one glyph, and modern operating systems render emoji beautifully at icon sizes. Emoji favicons suit side projects, documentation sites, event pages and personal blogs, anywhere a playful tone is an asset. Because emoji already have transparent backgrounds and strong silhouettes, they pair well with a soft rounded-square backdrop in a complementary colour. TinyIcon lets you type any emoji your device offers or tap a preset, then shapes the background and corners around it.</p>
+  <p class="text-[#c3d2c8] leading-relaxed mb-4">Image mode is for when you already have a logo or artwork. Drop in a PNG or JPG and TinyIcon centre-crops it to a square, applies your padding, and renders the full size range. Padding matters more than most people expect: artwork that touches the edges of the canvas looks cramped in a rounded browser tab and can lose its corners entirely when a platform masks the icon into a circle. Eight to fifteen percent padding gives the mark room to breathe and survives masking gracefully. Simple, bold, high-contrast images win; busy photographs rarely survive the journey down to sixteen pixels, and the preview wall will tell you so within seconds.</p>
+  <h3 class="text-xl font-bold mt-8 mb-3 text-[#6ee7b7]">Which sizes do you actually need?</h3>
+  <p class="text-[#c3d2c8] leading-relaxed mb-4">The size list in TinyIcon is not arbitrary — each entry answers a real request from a real platform. Sixteen and thirty-two pixels serve classic desktop browser tabs and bookmarks, with the larger one covering high-density retina displays. Forty-eight pixels appears in Windows shortcuts and some search results. The 180-pixel size is the Apple touch icon, shown when an iPhone or iPad user saves your site to their home screen. Android and progressive web apps ask for 192 and 512 pixels in the web app manifest, and the 512 also doubles as a splash and store icon. The 24, 64, 128 and 256 sizes fill in browser UI, taskbars and high-resolution contexts in between. Generating the full ladder from one master design keeps every context consistent, instead of the patchwork that results from resizing files by hand over the years.</p>
+  <p class="text-[#c3d2c8] leading-relaxed mb-4">Alongside the PNG set, TinyIcon builds a classic favicon.ico containing the 16, 32 and 48 pixel renders in a single file. The ICO format dates from the earliest days of the web, yet browsers still request /favicon.ico by default when a page does not declare icons, and some older tools and enterprise environments handle nothing else. Shipping both — a multi-size ICO for the traditionalists and crisp PNGs declared explicitly in your HTML — covers essentially every client that will ever ask.</p>
+  <h3 class="text-xl font-bold mt-8 mb-3 text-[#6ee7b7]">Backgrounds, corners and the shape of modern icons</h3>
+  <p class="text-[#c3d2c8] leading-relaxed mb-4">Icons no longer live as bare squares. Android masks icons into circles and squircles, browsers round tab icons subtly, and operating systems place them on shelves, docks and home screens with wildly different wallpapers behind them. The corner-radius control in TinyIcon exists so you can decide how your icon behaves under all that masking: a full fifty percent radius makes a true circle that no mask can damage, a gentle twenty percent looks like a contemporary app tile, and a sharp square keeps a technical, editorial character. A solid background colour is usually safer than transparency for a main favicon, because a transparent icon's letterforms can disappear against a dark browser theme or a busy wallpaper. If you do choose transparency — useful for overlay-style marks — test the preview tiles against both light and dark surroundings before committing.</p>
+  <p class="text-[#c3d2c8] leading-relaxed mb-4">Colour choice follows the usual rules of contrast, compressed. At sixteen pixels, your eye reads value — light versus dark — long before it reads hue. A mint background with near-black letters, like the TinyIcon default, works because the luminance gap is enormous. Pastel-on-white and dark-on-dark combinations fail in tabs even when they look refined on a brand board. If your brand colour is pale, consider using it as the letter colour on a deep charcoal field instead, or deepen the background one shade for the favicon only. Small deviations from the brand palette at favicon size are standard professional practice; recognisability beats pedantry.</p>
+  <h3 class="text-xl font-bold mt-8 mb-3 text-[#6ee7b7]">Putting the files on your site</h3>
+  <p class="text-[#c3d2c8] leading-relaxed mb-4">Once you have downloaded the sizes you need, place them in your site's root or an assets folder and reference them from the head of your HTML. A shortcut-icon link points legacy browsers at the ICO file, standard icon links declare the 16 and 32 pixel PNGs, the apple-touch-icon link serves the 180, and the manifest icons cover Android and installable web apps. Browsers cache favicons aggressively — famously so — which is why a redesigned icon can seem to refuse to update. Adding a version query string to the file name, or bumping the file name itself, forces a fresh fetch when you relaunch. Search engines also display favicons beside results on mobile, and they favour sites whose icon is crisp, square and at least 48 pixels in the declared set, one more reason to generate the full ladder rather than a single file.</p>
+  <p class="text-[#c3d2c8] leading-relaxed mb-4">Finally, treat the favicon as a living part of the brand. When you redesign, redesign the smallest size first and let the large render follow. Test in an actual browser tab next to the sites your visitors also keep open, because that crowded shelf — not the design file — is where your icon must win. With live previews at every size, per-size PNG downloads and a proper ICO export, TinyIcon turns that whole professional workflow into about thirty seconds of play. Pick a letter, an emoji or an image, shape it, check the tiny tiles, and ship an icon you can be proud of at sixteen pixels and beyond.</p>
+
+  <h2 class="text-2xl font-bold mt-10 mb-4">Frequently asked questions</h2>
+  <div class="space-y-3">
+    <details class="tile p-4"><summary class="font-semibold">What sizes should a modern favicon set include?</summary><p class="mt-2 text-[#c3d2c8]">A practical modern set covers 16×16 and 32×32 for browser tabs, 48×48 for shortcuts, 180×180 for Apple touch icons, 192×192 and 512×512 for Android and progressive web apps, plus a classic multi-size .ico file for older browsers. TinyIcon renders all of these from one design.</p></details>
+    <details class="tile p-4"><summary class="font-semibold">Can I make a favicon from an emoji?</summary><p class="mt-2 text-[#c3d2c8]">Yes. Switch TinyIcon to Emoji mode, pick one of the preset emoji or type your own, choose a background colour and corner style, and every size is rendered instantly. Emoji favicons are a fast way to give a small project a friendly, recognisable identity.</p></details>
+    <details class="tile p-4"><summary class="font-semibold">What image format works best for the image mode?</summary><p class="mt-2 text-[#c3d2c8]">A square PNG or JPG with a simple, high-contrast subject works best. TinyIcon centre-crops your image to a square, applies your chosen padding, background and corners, and exports clean PNG files. Very detailed photos shrink poorly at 16 pixels, so bold shapes and logos give the clearest results.</p></details>
+    <details class="tile p-4"><summary class="font-semibold">Why does my favicon look blurry in the browser tab?</summary><p class="mt-2 text-[#c3d2c8]">Blurriness usually means the browser is scaling a single large image down, or the design has thin lines and low contrast that disappear at 16 pixels. Use the live 16-pixel preview in TinyIcon to check legibility, simplify the design, increase contrast, and ship the exact sizes browsers ask for instead of one oversized file.</p></details>
+    <details class="tile p-4"><summary class="font-semibold">How do I add the downloaded favicon to my website?</summary><p class="mt-2 text-[#c3d2c8]">Upload the files to your site's root folder and add link tags in the head of your HTML: a shortcut icon link for the .ico file, icon links for the 32×32 and 16×16 PNGs, an apple-touch-icon link for the 180×180 PNG, and theme-color meta if you use the 192 and 512 sizes in a web app manifest.</p></details>
+    <details class="tile p-4"><summary class="font-semibold">Is TinyIcon free and are my images uploaded anywhere?</summary><p class="mt-2 text-[#c3d2c8]">Yes, TinyIcon is completely free with unlimited usage, no signup and no watermark. Everything is drawn locally in your browser with the canvas API — your images, text and emoji are never uploaded to a server, so the tool works privately and even offline once the page has loaded.</p></details>
+  </div>
+</article>
+
+<footer class="border-t border-[#39423c]">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-6 flex flex-col sm:flex-row gap-2 items-center justify-between text-sm text-[#8fa398]">
+    <span>TinyIcon — the favicon icon lab.</span>
+    <span>Designed at 512. Judged at 16.</span>
+  </div>
+</footer>
+
+<script id="lib-tinyicon">
+var TinyIconLib = (function () {
+  var SIZES = [16, 24, 32, 48, 64, 128, 180, 192, 256, 512];
+
+  function isValidSize(n) {
+    return SIZES.indexOf(n) !== -1;
+  }
+
+  function normalizeColor(input) {
+    if (typeof input !== 'string') return null;
+    var s = input.trim().toLowerCase();
+    if (/^#[0-9a-f]{6}$/.test(s)) return s;
+    if (/^#[0-9a-f]{3}$/.test(s)) {
+      return '#' + s[1] + s[1] + s[2] + s[2] + s[3] + s[3];
+    }
+    if (/^[0-9a-f]{6}$/.test(s)) return '#' + s;
+    return null;
+  }
+
+  function clampRadius(pct) {
+    var n = Number(pct);
+    if (!isFinite(n)) return 0;
+    if (n < 0) return 0;
+    if (n > 50) return 50;
+    return Math.round(n);
+  }
+
+  function clampPadding(pct) {
+    var n = Number(pct);
+    if (!isFinite(n)) return 0;
+    if (n < 0) return 0;
+    if (n > 40) return 40;
+    return Math.round(n);
+  }
+
+  // Font size (as fraction of canvas) that fits a text glyph string.
+  function textFontRatio(text) {
+    var len = (text || '').length;
+    if (len <= 1) return 0.62;
+    if (len === 2) return 0.46;
+    if (len === 3) return 0.34;
+    return 0.26;
+  }
+
+  function cleanText(text) {
+    if (typeof text !== 'string') return '';
+    return text.trim().slice(0, 4);
+  }
+
+  function firstGrapheme(str) {
+    if (typeof str !== 'string' || !str) return '';
+    // Split by code points, keeping surrogate pairs and common ZWJ sequences simple.
+    var chars = Array.from(str.trim());
+    if (!chars.length) return '';
+    var out = chars[0];
+    var i = 1;
+    while (i < chars.length && (chars[i] === '\u200d' || /^[\uFE0E\uFE0F\u{1F3FB}-\u{1F3FF}]$/u.test(chars[i]))) {
+      out += chars[i];
+      if (chars[i] === '\u200d' && i + 1 < chars.length) { out += chars[i + 1]; i += 2; } else { i += 1; }
+    }
+    return out;
+  }
+
+  function validateState(state) {
+    if (!state || typeof state !== 'object') return { ok: false, message: 'Nothing to render yet.' };
+    if (state.mode === 'text') {
+      if (!cleanText(state.text)) return { ok: false, message: 'Type at least one letter or number for your icon.' };
+      return { ok: true, message: '' };
+    }
+    if (state.mode === 'emoji') {
+      if (!firstGrapheme(state.emoji || '')) return { ok: false, message: 'Pick or type an emoji for your icon.' };
+      return { ok: true, message: '' };
+    }
+    if (state.mode === 'image') {
+      if (!state.hasImage) return { ok: false, message: 'Choose an image file to build your icon from.' };
+      return { ok: true, message: '' };
+    }
+    return { ok: false, message: 'Choose a mode: text, emoji or image.' };
+  }
+
+  // Build a Windows .ico container from PNG byte arrays: [{size, bytes(Uint8Array)}]
+  function buildIco(entries) {
+    if (!entries || !entries.length) return null;
+    var count = entries.length;
+    var headerSize = 6 + count * 16;
+    var total = headerSize;
+    for (var i = 0; i < count; i++) total += entries[i].bytes.length;
+    var out = new Uint8Array(total);
+    var dv = new DataView(out.buffer);
+    dv.setUint16(0, 0, true);       // reserved
+    dv.setUint16(2, 1, true);       // type: icon
+    dv.setUint16(4, count, true);   // image count
+    var offset = headerSize;
+    for (var j = 0; j < count; j++) {
+      var e = entries[j], p = 6 + j * 16;
+      out[p] = e.size >= 256 ? 0 : e.size;       // width (0 = 256)
+      out[p + 1] = e.size >= 256 ? 0 : e.size;   // height
+      out[p + 2] = 0;                            // palette
+      out[p + 3] = 0;                            // reserved
+      dv.setUint16(p + 4, 1, true);              // planes
+      dv.setUint16(p + 6, 32, true);             // bpp
+      dv.setUint32(p + 8, e.bytes.length, true); // size
+      dv.setUint32(p + 12, offset, true);        // offset
+      out.set(e.bytes, offset);
+      offset += e.bytes.length;
+    }
+    return out;
+  }
+
+  function fileName(brand, size) {
+    return 'tinyicon-' + size + 'x' + size + '.png';
+  }
+
+  return {
+    SIZES: SIZES,
+    isValidSize: isValidSize,
+    normalizeColor: normalizeColor,
+    clampRadius: clampRadius,
+    clampPadding: clampPadding,
+    textFontRatio: textFontRatio,
+    cleanText: cleanText,
+    firstGrapheme: firstGrapheme,
+    validateState: validateState,
+    buildIco: buildIco,
+    fileName: fileName
+  };
+})();
+if (typeof module !== 'undefined' && module.exports) { module.exports = TinyIconLib; }
+
+</script>
+<script>
+(function(){
+  var SIZES = TinyIconLib.SIZES;
+  var state = { mode:'text', text:'Ti', emoji:'🚀', hasImage:false };
+  var img = null;
+  var grid = document.getElementById('previewGrid');
+  var tileCanvases = {};
+
+  var notes = {16:'Browser tab',24:'Tab (retina UI)',32:'Retina tab / bookmark',48:'Shortcut',64:'Taskbar',128:'High-res UI',180:'Apple touch icon',192:'Android / PWA',256:'High-res tile',512:'PWA / splash'};
+
+  SIZES.forEach(function(size){
+    var card = document.createElement('div');
+    card.className = 'tile p-4 text-center flex flex-col items-center justify-center gap-3';
+    var holder = document.createElement('div');
+    holder.className = 'checker rounded-lg p-2 flex items-center justify-center';
+    holder.style.minHeight = '72px'; holder.style.minWidth = '72px';
+    var c = document.createElement('canvas');
+    c.width = size; c.height = size;
+    c.style.width = Math.min(size, 128) + 'px'; c.style.height = Math.min(size, 128) + 'px';
+    c.setAttribute('aria-label', size + ' pixel favicon preview');
+    holder.appendChild(c);
+    var label = document.createElement('p');
+    label.className = 'mono text-sm';
+    label.innerHTML = size + '×' + size + ' <span class="block text-[11px] text-[#8fa398] font-sans">' + notes[size] + '</span>';
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'bg-[#313a34] hover:bg-[#6ee7b7] hover:text-[#14201a] text-sm font-semibold rounded-lg px-4 py-2 w-full';
+    btn.textContent = 'Download PNG';
+    btn.addEventListener('click', function(){ downloadSize(size); });
+    card.appendChild(holder); card.appendChild(label); card.appendChild(btn);
+    grid.appendChild(card);
+    tileCanvases[size] = c;
+  });
+
+  var bgPresets = ['#6ee7b7','#34d399','#202623','#f8fafc','#f59e0b','#ef4444','#3b82f6','#8b5cf6','#ec4899','#facc15'];
+  var bp = document.getElementById('bgPresets');
+  bgPresets.forEach(function(col){
+    var b = document.createElement('button');
+    b.type='button'; b.className='w-8 h-8 rounded-lg border border-[#39423c]'; b.style.background = col; b.title = col;
+    b.setAttribute('aria-label','Background ' + col);
+    b.addEventListener('click', function(){
+      document.getElementById('bgColor').value = col;
+      document.getElementById('transparentBg').checked = false;
+      render();
+    });
+    bp.appendChild(b);
+  });
+
+  var emojis = ['🚀','🌿','🔥','⭐','🎧','🍕','🐙','💡','🌊','🦊','⚡','🎨'];
+  var ep = document.getElementById('emojiPresets');
+  emojis.forEach(function(e){
+    var b = document.createElement('button');
+    b.type='button'; b.className='text-2xl bg-[#313a34] hover:bg-[#39423c] rounded-lg w-11 h-11'; b.textContent = e;
+    b.addEventListener('click', function(){ document.getElementById('emojiInput').value = e; render(); });
+    ep.appendChild(b);
+  });
+
+  document.querySelectorAll('.mode-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      state.mode = btn.getAttribute('data-mode');
+      document.querySelectorAll('.mode-btn').forEach(function(x){ x.setAttribute('aria-pressed', x===btn ? 'true':'false'); });
+      ['text','emoji','image'].forEach(function(m){
+        document.getElementById('panel-' + m).classList.toggle('hidden', m !== state.mode);
+      });
+      render();
+    });
+  });
+
+  function draw(ctx, size){
+    var bg = document.getElementById('bgColor').value;
+    var transparent = document.getElementById('transparentBg').checked;
+    var radiusPct = TinyIconLib.clampRadius(document.getElementById('radiusRange').value);
+    var r = size * radiusPct / 100;
+    ctx.clearRect(0,0,size,size);
+    ctx.save();
+    ctx.beginPath();
+    if (ctx.roundRect) { ctx.roundRect(0,0,size,size,r); } else { ctx.rect(0,0,size,size); }
+    ctx.clip();
+    if (!transparent) { ctx.fillStyle = bg; ctx.fillRect(0,0,size,size); }
+    if (state.mode === 'text') {
+      var text = TinyIconLib.cleanText(document.getElementById('textInput').value);
+      ctx.fillStyle = document.getElementById('textColor').value;
+      ctx.font = '700 ' + Math.round(size * TinyIconLib.textFontRatio(text)) + 'px "Space Grotesk", sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(text, size/2, size/2 + size*0.03);
+    } else if (state.mode === 'emoji') {
+      var em = TinyIconLib.firstGrapheme(document.getElementById('emojiInput').value);
+      ctx.font = Math.round(size * 0.62) + 'px serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(em, size/2, size/2 + size*0.05);
+    } else if (state.mode === 'image' && img) {
+      var pad = size * TinyIconLib.clampPadding(document.getElementById('padRange').value) / 100;
+      var box = size - pad*2;
+      var scale = Math.max(box / img.width, box / img.height);
+      var w = img.width * scale, h = img.height * scale;
+      ctx.drawImage(img, (size - w)/2, (size - h)/2, w, h);
+    }
+    ctx.restore();
+  }
+
+  function render(){
+    document.getElementById('bgColorHex').textContent = document.getElementById('bgColor').value;
+    document.getElementById('textColorHex').textContent = document.getElementById('textColor').value;
+    document.getElementById('radiusVal').textContent = TinyIconLib.clampRadius(document.getElementById('radiusRange').value) + '%';
+    document.getElementById('padVal').textContent = TinyIconLib.clampPadding(document.getElementById('padRange').value) + '%';
+    state.text = document.getElementById('textInput').value;
+    state.emoji = document.getElementById('emojiInput').value;
+    state.hasImage = !!img;
+    var v = TinyIconLib.validateState(state);
+    var msg = document.getElementById('statusMsg');
+    if (!v.ok) { msg.textContent = v.message; msg.style.color = '#fca5a5'; }
+    else { msg.textContent = 'Looking good — live previews updated. Check the 16px tile before downloading.'; msg.style.color = ''; }
+    SIZES.forEach(function(s){ draw(tileCanvases[s].getContext('2d'), s); });
+    draw(document.getElementById('heroCanvas').getContext('2d'), 512);
+    draw(document.getElementById('tabCanvas').getContext('2d'), 16);
+  }
+
+  function downloadSize(size){
+    var v = TinyIconLib.validateState(state);
+    if (!v.ok) { document.getElementById('statusMsg').textContent = v.message; return; }
+    var c = document.createElement('canvas'); c.width = size; c.height = size;
+    draw(c.getContext('2d'), size);
+    var a = document.createElement('a');
+    a.download = TinyIconLib.fileName('tinyicon', size);
+    a.href = c.toDataURL('image/png');
+    a.click();
+  }
+
+  document.getElementById('icoBtn').addEventListener('click', function(){
+    var v = TinyIconLib.validateState(state);
+    if (!v.ok) { document.getElementById('statusMsg').textContent = v.message; return; }
+    var wanted = [16, 32, 48];
+    var entries = [];
+    var pending = wanted.length;
+    wanted.forEach(function(size, idx){
+      var c = document.createElement('canvas'); c.width = size; c.height = size;
+      draw(c.getContext('2d'), size);
+      c.toBlob(function(blob){
+        blob.arrayBuffer().then(function(buf){
+          entries[idx] = { size: size, bytes: new Uint8Array(buf) };
+          pending--;
+          if (pending === 0) {
+            var ico = TinyIconLib.buildIco(entries);
+            var url = URL.createObjectURL(new Blob([ico], { type: 'image/x-icon' }));
+            var a = document.createElement('a');
+            a.download = 'favicon.ico'; a.href = url; a.click();
+            setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+          }
+        });
+      }, 'image/png');
+    });
+  });
+
+  document.getElementById('imageInput').addEventListener('change', function(e){
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (!/^image\//.test(file.type)) { document.getElementById('statusMsg').textContent = 'That file is not an image — please choose a PNG, JPG or similar.'; return; }
+    var url = URL.createObjectURL(file);
+    var im = new Image();
+    im.onload = function(){ img = im; render(); };
+    im.onerror = function(){ document.getElementById('statusMsg').textContent = 'That image could not be read. Try a different file.'; };
+    im.src = url;
+  });
+
+  ['textInput','textColor','emojiInput','bgColor','radiusRange','padRange'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', render);
+    document.getElementById(id).addEventListener('change', render);
+  });
+  document.getElementById('transparentBg').addEventListener('change', render);
+  render();
+})();
+</script>
+</body>
+</html>
